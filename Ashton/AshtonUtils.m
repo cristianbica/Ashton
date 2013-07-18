@@ -43,4 +43,16 @@
     return CFBridgingRelease(font);
 }
 
++ (id)CTParagraphStyleRefWithTextAlignment:(NSString *)textAlignment {
+    CTTextAlignment alignment;
+    if ([textAlignment isEqualToString:@"left"])      alignment = kCTTextAlignmentLeft;
+    if ([textAlignment isEqualToString:@"right"])     alignment = kCTTextAlignmentRight;
+    if ([textAlignment isEqualToString:@"center"])    alignment = kCTTextAlignmentCenter;
+    if ([textAlignment isEqualToString:@"justified"]) alignment = kCTTextAlignmentJustified;
+    CTParagraphStyleSetting alignments =  {kCTParagraphStyleSpecifierAlignment, sizeof(alignment), &alignment};
+    CTParagraphStyleSetting pss[1] = {alignments};
+    CTParagraphStyleRef ps = CTParagraphStyleCreate(pss, 1);
+    return (id)CFBridgingRelease(ps);
+}
+
 @end

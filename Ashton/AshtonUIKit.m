@@ -101,14 +101,7 @@
             if ([attrName isEqualToString:AshtonAttrParagraph]) {
                 // consumes: paragraph
                 NSDictionary *attrDict = attr;
-                NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-
-                if ([attrDict[AshtonParagraphAttrTextAlignment] isEqualToString:@"left"])  paragraphStyle.alignment = NSTextAlignmentLeft;
-                if ([attrDict[AshtonParagraphAttrTextAlignment] isEqualToString:@"right"]) paragraphStyle.alignment = NSTextAlignmentRight;
-                if ([attrDict[AshtonParagraphAttrTextAlignment] isEqualToString:@"center"]) paragraphStyle.alignment = NSTextAlignmentCenter;
-                if ([attrDict[AshtonParagraphAttrTextAlignment] isEqualToString:@"justified"]) paragraphStyle.alignment = NSTextAlignmentJustified;
-
-                newAttrs[NSParagraphStyleAttributeName] = paragraphStyle;
+                newAttrs[(id)kCTParagraphStyleAttributeName] = [AshtonUtils CTParagraphStyleRefWithTextAlignment:attrDict[AshtonParagraphAttrTextAlignment]];
             }
             if ([attrName isEqualToString:AshtonAttrFont]) {
                 // consumes: font
@@ -122,30 +115,23 @@
                                                                                     features:attrDict[AshtonFontAttrFeatures]]);
 
                 if (ctFont) {
-                    // We need to construct a kCTFontPostScriptNameKey for the font with the given attributes
-                    NSString *fontName = CFBridgingRelease(CTFontCopyName(ctFont, kCTFontPostScriptNameKey));
-                    UIFont *font = [UIFont fontWithName:fontName size:[attrDict[AshtonFontAttrPointSize] doubleValue]];
-
-                    if (font) newAttrs[NSFontAttributeName] = font;
-                } else {
-                    // assign system font with requested size
-                    newAttrs[NSFontAttributeName] = [UIFont systemFontOfSize:[attrDict[AshtonFontAttrPointSize] doubleValue]];
+                    newAttrs[(id)kCTFontAttributeName] = (__bridge id)ctFont;
                 }
             }
             if ([attrName isEqualToString:AshtonAttrUnderline]) {
                 // consumes: underline
-                if ([attr isEqualToString:AshtonUnderlineStyleSingle]) newAttrs[NSUnderlineStyleAttributeName] = @(NSUnderlineStyleSingle);
-                if ([attr isEqualToString:AshtonUnderlineStyleDouble]) newAttrs[NSUnderlineStyleAttributeName] = @(NSUnderlineStyleSingle);
-                if ([attr isEqualToString:AshtonUnderlineStyleThick]) newAttrs[NSUnderlineStyleAttributeName] = @(NSUnderlineStyleSingle);
+                if ([attr isEqualToString:AshtonUnderlineStyleSingle]) newAttrs[(id)kCTUnderlineStyleAttributeName] = @(kCTUnderlineStyleSingle);
+                if ([attr isEqualToString:AshtonUnderlineStyleDouble]) newAttrs[(id)kCTUnderlineStyleAttributeName] = @(kCTUnderlineStyleSingle);
+                if ([attr isEqualToString:AshtonUnderlineStyleThick])  newAttrs[(id)kCTUnderlineStyleAttributeName] = @(kCTUnderlineStyleSingle);
             }
             if ([attrName isEqualToString:AshtonAttrStrikethrough]) {
-                if ([attr isEqualToString:AshtonStrikethroughStyleSingle]) newAttrs[NSStrikethroughStyleAttributeName] = @(NSUnderlineStyleSingle);
-                if ([attr isEqualToString:AshtonStrikethroughStyleDouble]) newAttrs[NSStrikethroughStyleAttributeName] = @(NSUnderlineStyleSingle);
-                if ([attr isEqualToString:AshtonStrikethroughStyleThick]) newAttrs[NSStrikethroughStyleAttributeName] = @(NSUnderlineStyleSingle);
+                if ([attr isEqualToString:AshtonStrikethroughStyleSingle]) newAttrs[(id)kCTStrokeWidthAttributeName] = @(kCTUnderlineStyleSingle);
+                if ([attr isEqualToString:AshtonStrikethroughStyleDouble]) newAttrs[(id)kCTStrokeWidthAttributeName] = @(kCTUnderlineStyleSingle);
+                if ([attr isEqualToString:AshtonStrikethroughStyleThick])  newAttrs[(id)kCTStrokeWidthAttributeName] = @(kCTUnderlineStyleSingle);
             }
             if ([attrName isEqualToString:AshtonAttrColor]) {
                 // consumes: color
-                newAttrs[NSForegroundColorAttributeName] = [self colorForArray:attr];
+                newAttrs[(id)kCTForegroundColorAttributeName] = (id)[self colorForArray:attr].CGColor;
             }
             if ([self.attributesToPreserve containsObject:attrName]) {
                 newAttrs[attrName] = attr;

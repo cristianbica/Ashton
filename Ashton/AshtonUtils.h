@@ -3,5 +3,6 @@
 @interface AshtonUtils : NSObject
 
 + (id)CTFontRefWithFamilyName:(NSString *)familyName postScriptName:(NSString *)postScriptName size:(CGFloat)pointSize boldTrait:(BOOL)isBold italicTrait:(BOOL)isItalic features:(NSArray *)features;
++ (id)CTParagraphStyleRefWithTextAlignment:(NSString *)textAlignment;
 
 @end
